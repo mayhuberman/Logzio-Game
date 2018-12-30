@@ -8,10 +8,12 @@ from User import User
 
 REDIS_PREFIX = 'onboarding_game.'
 
+
 def save_record(currentScore, high_score, nickname, redis):
-    if currentScore > high_score:
+    if int(currentScore) > int(high_score):
         redis.set(REDIS_PREFIX + nickname, currentScore)
-        print "It's your new record! well done!"
+        print str(currentScore) + " - It's your new record! well done!"
+
 
 def main():
     currentScore = 0
@@ -20,7 +22,9 @@ def main():
     nickname = getpass.getuser()
     high_score = r.get(REDIS_PREFIX + nickname)
     if high_score == None:
-        r.set(REDIS_PREFIX + nickname , 0)
+        r.set(REDIS_PREFIX + nickname, 0)
+    else:
+        print "your highest score: " + str(high_score)
 
     print('\33[94m' + '****** Hello ' + nickname + ', welcome to Logz.io trivia game!!! ******')
     print("Would you like to play? (Y/n)")
@@ -28,18 +32,21 @@ def main():
     if response != "Y":
         exit()
     else:
-        # print redisHandler.get("onboarding_game.yotam")
-        user = User(nickname, highestScore, currentScore)
+        # user = User(nickname, highestScore, currentScore)
         random.shuffle(questions)
         for question in questions:
+            print currentScore
             currentScore += question.ask()
-            print "Your score is " + currentScore + "!"
+            print currentScore
+
+            print "Your score is " + str(currentScore) + "!"
             print("Continue? (ENTER/n)")
             response = sys.stdin.readline().strip()
             if response == "n":
-                print "Your final score is " + currentScore + "!"
-                save_record(currentScore, high_score, nickname, redis)
+                print "Your final score is " + str(currentScore) + "!"
+                save_record(currentScore, high_score, nickname, r)
                 exit()
+        save_record(currentScore, high_score, nickname, r)
 
 
 if __name__ == "__main__":
