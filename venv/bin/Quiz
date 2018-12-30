@@ -1,0 +1,44 @@
+import string
+import sys
+import random
+import getpass
+# from questions import questions
+from User import User
+import redis
+
+currentScore = 0
+
+
+def increase_score():
+    currentScore += 10
+
+
+def main():
+
+    r = redis.StrictRedis(host="pandora-redis.oxbpoj.0001.use1.cache.amazonaws.com", port=6379, db=0)
+    print r.get('onboarding_game.yotam')
+
+    nickname = getpass.getuser()
+    print('\33[94m' + '****** Hello ' + nickname + ', welcome to Logz.io trivia game!!! ******')
+    print("Would you like to play? press Y to continue, djhvaksfbkjhlf14ef54wfq3T to quit")
+    print("Just kidding, you can press N between questions if you want to quit or ENTER to continue")
+    response = sys.stdin.readline().strip()
+    if response != "Y":
+        exit()
+    else:
+        # print redisHandler.get("onboarding_game.yotam")
+        highestScore = 100
+        user = User(nickname, highestScore, currentScore)
+        random.shuffle(questions)
+        for question in questions:
+            question.ask()
+            print currentScore
+
+            response = sys.stdin.readline().strip()
+            if response == "N":
+                exit()
+
+
+if __name__ == "__main__":
+    main()
+
